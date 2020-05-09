@@ -58,7 +58,7 @@ curandState state;
 }
 
 __global__
-void iterate () {
+void iterate (float* xarr, float* yarr, double dt, double tfinal) {
 // Initialize variables relating to each individual particle
     double x; // x-value of particle
     double y; // y-value of particle
@@ -71,7 +71,7 @@ void iterate () {
 	i = blockDim.x * blockIdx.x + threadIdx.x;
 
 	// Make particle
-        new_particle(&x, &y, &velx, &vel,y,i);
+        new_particle(&x, &y, &velx, &vely,i);
        
         // Iterate over timesteps, for this particle
         for (step=0; step<NSTEPS;step++)
@@ -111,13 +111,17 @@ int main() {
     cudaMallocManaged(&xarr, NPARTS*NSTEPS*sizeof(float));
 	cudaMallocManaged(&yarr, NPARTS*NSTEPS*sizeof(float));
     // Compute timestep
-    const double dt = tfinal / NSTEPS / NSUBSTEPS; // time step of simulation
+    
+
+	
+	
+	
+	const double dt = tfinal / NSTEPS / NSUBSTEPS; // time step of simulation
 
     // Begin simulation
     printf("Running particle simulation...\n");
-        int i, j, step;
-   
-
+        int i, step;
+  
 
 	cudaDeviceSynchronize();	
     // Iterate over particles
@@ -125,7 +129,7 @@ int main() {
     cudaDeviceSynchronize();
     
     printf("Particle simulation complete!\n");
-    printf("Simulation execution time: %f secs\n", t1 - t0);
+
     
     // Store x and y position arrays to CSV files 'xarr.txt' and 'yarr.txt'
     //   Each row will be a particle
